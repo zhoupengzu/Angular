@@ -1,0 +1,58 @@
+父组件到子组件，通过属性值联系；子组件到父组件，通过事件传递
+一、通过setter截听输入属性值的变化
+注意命名，不然容易造成死循环
+export class NameChildComponent{
+  _name: string = '';
+  @Input()
+  set name(name: string){
+    this._name = name;
+  }
+  get name(): string{
+    return this._name;
+  }
+}
+
+二、通过ngOnChanges()来截听输入属性值的变化
+通过setter和getter的方法来监听，适用于少量的或者单个的
+使用OnChanges生命周期钩子接口的ngOnChanges()方法来监测输入属性值的变化并做出回应
+当Angular（重新）设置数据绑定输入属性时响应。 该方法接受当前和上一属性值的SimpleChanges对象，当被绑定的输入属性的值发生变化时调用，首次调用一定会发生在ngOnInit()之前
+
+三、父组件与子组件通过本地变量互动
+父组件不能使用数据绑定来读取子组件的属性或调用子组件的方法。但可以在父组件模板里，新建一个本地变量来代表子组件，然后利用这个变量来读取子组件的属性和调用子组件的方法
+局限性:因为父组件-子组件的连接必须全部在父组件的模板中进行
+import { AfterViewInit, ViewChild } from '@angular/core';
+import { Component }                from '@angular/core';
+import { CountdownTimerComponent }  from './countdown-timer.component';
+ 
+@Component({
+  selector: 'countdown-parent-vc',
+  template: `
+  <h3>Countdown to Liftoff (via ViewChild)</h3>
+  <button (click)="start()">Start</button>
+  <button (click)="stop()">Stop</button>
+  <div class="seconds">{{ seconds() }}</div>
+  <countdown-timer></countdown-timer>
+  `,
+  styleUrls: ['demo.css']
+})
+export class CountdownViewChildParentComponent implements AfterViewInit {
+ 
+  @ViewChild(CountdownTimerComponent)
+  private timerComponent: CountdownTimerComponent;
+ 
+  seconds() { return 0; }
+ 
+  ngAfterViewInit() {
+    // Redefine `seconds()` to get from the `CountdownTimerComponent.seconds` ...
+    // but wait a tick first to avoid one-time devMode
+    // unidirectional-data-flow-violation error
+    setTimeout(() => this.seconds = () => this.timerComponent.seconds, 0);
+  }
+ 
+  start() { this.timerComponent.start(); }
+  stop() { this.timerComponent.stop(); }
+}
+
+四、父组件和子组件通过服务来通讯
+父组件和它的子组件共享同一个服务，利用该服务在家庭内部实现双向通讯。
+该服务实例的作用域被限制在父组件和其子组件内。这个组件子树之外的组件将无法访问该服务或者与它们通讯。
