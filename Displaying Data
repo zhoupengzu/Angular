@@ -1,0 +1,26 @@
+1、插值语法
+2、*ngFor用来遍历一个数组，讲数组中的东西展示出来
+@Component({
+  selector: 'app-root',
+  // templateUrl: './app.component.html',
+  template: `
+    <h1>{{title}}</h1>
+    <h2>My favorite hero is:{{myHero}}</h2>
+    <ul>
+      <li *ngFor="let hero of heroes">{{hero}}</li>
+    </ul>
+  `,
+  styleUrls: ['./app.component.css']
+})
+export class AppComponent {
+  // title = 'Tour of Heroes';
+  // myHero = 'Windstorm';
+  title: string;
+  heroes = ['Windstorm','Bombasto','Magneta','Tornado'];
+  myHero = this.heroes[0];
+  constructor(){
+    this.title = "Tour of Heroes";
+  }
+}
+
+3、*ngIf用来条件控制某个表情是否展示
