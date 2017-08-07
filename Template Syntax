@@ -1,1 +1,40 @@
+一、模版表达式
+1、js中的一些写法应该被禁止
+赋值运算符（=, +=, -=, ...)、关键字new、自增和自减（++、--）
+2、不支持的
+没有位运算、一些新的语法
 
+二、DOM属性（property）和标签属性（attribute）
+1、元素属性绑定（格式：【attr.属性】=“组件属性”）
+之所以有元素属性绑定是因为有些元素没有相应的DOM属性，此时就需要使用元素属性绑定，格式如下：
+<table border=1>
+  <!--  expression calculates colspan=2 -->
+  <tr><td [attr.colspan]="1 + 1">One-Two</td></tr>
+
+  <!-- ERROR: There is no `colspan` property to set!
+    <tr><td colspan="{{1 + 1}}">Three-Four</td></tr>
+  -->
+
+  <tr><td>Five</td><td>Six</td></tr>
+</table>
+
+2、class绑定
+和上一个相类似
+3、style绑定
+和上一个相类似
+
+4、事件绑定
+<button (click)="onSave()">Save</button>或者<button on-click="onSave()">On Save</button>
+
+5、属性型指令：[ngClass]、[ngStyle]、[(ngModel)]
+6、结构型指令：*ngIf、*ngFor(可以使用trackby)、*ngSwitch和*ngSwitchCase和*ngSwitchDefault
+
+三、模版引用变量（#）
+模板引用变量通常用来引用模板中的某个DOM元素，它还可以引用Angular组件或指令或Web Component。
+使用井号 (#) 来声明引用变量，我们可以在模板中的任何地方引用模板引用变量。
+<input #phone placeholder="phone number">
+
+<!-- lots of other elements -->
+
+<!-- phone refers to the input element; pass its `value` to an event handler -->
+<button (click)="callPhone(phone.value)">Call</button>
