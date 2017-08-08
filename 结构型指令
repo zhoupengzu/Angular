@@ -1,0 +1,7 @@
+1、*ngIf *ngSwitch *ngFor以及NgIf NgSwitch NgFor都是结构型指令，不同的在于NgIf等引用的是类名，而*ngIf等引用的是指令的属性名
+2、每个宿主元素上只能有一个结构型指令
+3、当需要写自己的结构型指令时，我们就要使用<ng-template>
+4、<ng-container>是一个分组元素，但它不会污染样式或元素布局，因为 Angular 压根不会把它放进 DOM 中
+一、NgIf或者ngIf案例分析
+ngIf指令并不是使用CSS来隐藏元素的。它会把这些元素从DOM中物理删除；
+指令也可以通过把它的display风格设置为none而隐藏不需
