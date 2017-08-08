@@ -1,0 +1,78 @@
+1、先要定义一个锚点来告诉Angular要把组件插入到什么地方(指令)
+import { Directive, ViewContainerRef } from '@angular/core';
+
+@Directive({
+  selector: '[ad-host]',
+})
+export class AdDirective {
+  constructor(public viewContainerRef: ViewContainerRef) { }
+}
+AdDirective注入了ViewContainerRef来获取对容器视图的访问权，这个容器就是那些动态加入的组件的宿主。
+在@Directive装饰器中，要注意选择器的名称：ad-host，它就是我们将应用到元素上的指令
+2、加载组件
+<ng-template>元素是动态加载组件的最佳选择，因为它不会渲染任何额外的输出
+template: `
+            <div class="ad-banner">
+              <h3>Advertisements</h3>
+              <ng-template ad-host></ng-template>
+            </div>
+          `
+3、解析组件
+
+
+总结（关键点）：
+1、定一个锚点，不再是@Component({...})而是@Directive({...)}
+2、需要重写constructor，指定参数，生成一个公共viewContainer，后面还要用该变量创建组件
+3、需要在父组件中定一个ComponentFactoryResolver
+4、需要注意app.module.ts中的参数添加，如下，banner不止需要在declarations里添加，还需要在entryComponents中添加，AdDirective虽然是动态指令，但是也需要添加
+
+//ad.directive.ts
+import { Directive, ViewContainerRef } from '@angular/core';
+
+@Directive({
+  selector: '[ad-host]',
+})
+
+export class AdDirective{
+  constructor(public viewContainerRef: ViewContainerRef){}
+}
+//ad-banner.components.ts
+@Component({
+  selector: 'ad-banner',
+  template: `
+    <div>
+      <ng-template ad-host></ng-template>
+    </div>
+  `
+})
+
+export class AdBannerComponent implements AfterViewInit{
+  @ViewChild(AdDirective) directive: AdDirective;
+  constructor(private componentFactory: ComponentFactoryResolver){}
+  ngAfterViewInit(){
+    let componentFactory = this.componentFactory.resolveComponentFactory(Banner);
+    let viewContainerRef = this.directive.viewContainerRef;
+    viewContainerRef.clear();
+    let componentRef = viewContainerRef.createComponent(componentFactory);
+    (<Banner>componentRef.instance).content = 'hahhahah';
+  }
+}
+//app.module.ts
+import { AdBannerComponent } from './ad-banner.component';
+import { Banner } from './banner.component';
+import { AdDirective } from './ad.directive';
+
+@NgModule({
+  declarations: [
+    AppComponent,
+    AdBannerComponent,
+    AdDirective,
+    Banner,
+  ],
+  imports: [
+    BrowserModule
+  ],
+  entryComponents:[Banner],
+  providers: [],
+  bootstrap: [AppComponent]
+})
