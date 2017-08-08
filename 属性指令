@@ -1,0 +1,27 @@
+1、属性型指令至少需要一个带有@Directive装饰器的控制器类。该装饰器指定了一个用于标识属性的选择器。 控制器类实现了指令需要的指令行为。
+
+import { Directive,ElementRef,HostListener,Input } from '@angular/core';
+
+@Directive({
+  selector: '[myHightlight]'
+})
+
+export class HightlightDirective{
+  @Input('myHightlight') highlightColor: string;
+  constructor(private el:ElementRef){
+  }
+  @HostListener('mouseenter') onMouseEnter(){
+    this.highlight(this.highlightColor);
+  }
+  @HostListener('mouseleave') onMouseLeave(){
+    this.highlight(null);
+  }
+  private highlight(color:string){
+    this.el.nativeElement.style.backgroundColor = color;
+  }
+}
+
+<h1>My First Attribute Directive</h1>
+<!-- <p myHightlight highlightColor="yellow">Highlight me with yellow!</p>
+<p myHightlight [highlightColor]="color">Highlight me with orange!</p> -->
+<p [myHightlight]="color">Highlight me with orange!</p>
